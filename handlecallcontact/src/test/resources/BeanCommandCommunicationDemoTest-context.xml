@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+
+       default-autowire="no" default-lazy-init="true">
+
+
+    <!-- appserver side -->
+    <bean id="callContactChoreography" class="HandleCallContactChoreographyStub"/>
+
+    <bean id="handleCallContactControllerServer" class="HandleCallContactControllerImpl">
+        <constructor-arg ref="callContactChoreography"/>
+    </bean>
+
+    <bean id="beanCommandServer" class="BeanCommandServerImpl" />
+
+    <!-- portal side -->
+    <bean id="handleCallContactController" class="BeanCommandClient">
+        <constructor-arg ref="beanCommandServer" />
+        <constructor-arg value="HandleCallContactController" />
+        <property name="beanName"><idref bean="handleCallContactControllerServer" /></property>
+    </bean>
+
+</beans>
