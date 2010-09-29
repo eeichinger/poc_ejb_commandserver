@@ -6,7 +6,7 @@
        default-autowire="no" default-lazy-init="true">
 
 
-    <!-- appserver side -->
+    <!-- server side -->
     <bean id="callContactChoreography" class="HandleCallContactChoreographyStub"/>
 
     <bean id="handleCallContactControllerServer" class="HandleCallContactControllerImpl">
@@ -15,7 +15,7 @@
 
     <bean id="beanCommandServer" class="BeanCommandServerImpl" />
 
-    <!-- portal side -->
+    <!-- client side -->
     <bean id="handleCallContactController" class="BeanCommandClient">
         <constructor-arg ref="beanCommandServer" />
         <constructor-arg value="HandleCallContactController" />
