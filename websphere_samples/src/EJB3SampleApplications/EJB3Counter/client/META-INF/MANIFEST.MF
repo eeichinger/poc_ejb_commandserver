@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Created-By: 2.3 (IBM Corporation)
+Class-Path: EJB3CounterSampleClient.jar EJB3Beans.jar ./
+Main-Class: com.ibm.websphere.ejb3sample.counter.client.RemoteEJBCount
+Ant-Version: Apache Ant 1.6.5
+

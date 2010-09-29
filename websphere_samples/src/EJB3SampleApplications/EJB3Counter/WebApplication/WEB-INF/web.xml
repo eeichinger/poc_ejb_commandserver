@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.4"
+  xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	<description>IBM WebSphere Application Server EJB3 Sample Web Application</description>
+	<display-name>Web Application</display-name>
+	<servlet>
+		<description>This servlet demonstrates the various ways to increment EJB3 counter beans.</description>
+		<display-name>EJB Count Servlet</display-name>
+		<servlet-name>EJB Count Servlet</servlet-name>
+		<servlet-class>com.ibm.websphere.ejb3sample.counter.EJBCount</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>EJB Count Servlet</servlet-name>
+		<url-pattern>/counter</url-pattern>
+	</servlet-mapping>
+</web-app>

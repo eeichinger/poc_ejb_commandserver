@@ -1,0 +1,655 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;">
+  <title>EJB 3.0 Counter Sample</title>
+  <style>
+  </style>
+</head>
+<body lang="EN-US" link="blue" vlink="purple">
+<div>
+<h1>WebSphere Application Server 6.1 Feature Pack for<br>
+EJB 3.0/JPA Counter Sample</h1>
+<h2>Overview</h2>
+<p>The EJB3CounterSample application demonstrates EJB 3.0 and
+JPA 1.0 functionality. The sample is
+very easy to install. It provides both local and remote access to the
+EJB. For the local access, it contains a
+servlet that provides web browser access to a stateless session bean,
+which implements a persistent counter, using
+Java Persistence API (JPA). Remote access is through an application
+client using the J2EE application client container. A JPA counter
+Entity provides
+persistence via a datasource that is connected to an embedded Derby
+database table. WebSphere Application Server enhanced ear support
+pre-configures the datasource and database table. Therefore, you can
+simply install the application and the persistent
+resources are ready to use. The
+functionality demonstrated by the sample is described in more detail
+below.</p>
+<h2>JavaEE 5, EJB 3.0, JPA 1.0 and WebSphere Application Server
+Functions Demonstrated by Sample</h2>
+<p>The EJB3CounterSample application demonstrates new WebSphere
+Application Server capabilities and Java EE 5
+functions. &nbsp;&nbsp; Following is a list of these functions with
+references to
+various parts of the sample source code.</p>
+<ol>
+  <li><i>Integrated, Just-In-Time Deployment in the EJB Container and
+JPA Provider.</i> The EJB and JPA Entities in the sample have no
+pre-generated deployed files present in their module. This is because
+the WebSphere Application Server EJB Container no longer requires
+pre-generated artifacts (e.g. from running the EJBDeploy tool), as
+these are now implemented dynamically inside the Container. Similarly,
+the JPA provider does not require pre-generated artifacts.</li>
+  <li><i>Use of annotations rather than XML deployment descriptors, and
+leveraging of default metadata.</i> The EJB in this sample uses J2SE
+5.0 annotations to configure "Plain Old Java Objects" (POJOs) as
+enterprise beans (see <font face="Courier">@Stateless</font> in
+StatelessCounterBean.java). These annotations replace the need for <font
+ face="Courier">&lt;session&gt;</font> and <font face="Courier">&lt;session-type&gt;</font>
+elements in an ejb-jar.xml file. In fact notice that the EJB3Beans.jar
+in the sample does not contain any XML deployment descriptor or
+bindings files at all.</li>
+  <li><i>Progressive disclosure of complexity.</i> The EJB in the
+sample demonstrates that it is no longer necessary to provide
+implementations for ejb framework lifecycle methods like ejbCreate,
+ejbActivate, and so on. Notice that in StatelessCounterBean.java there is
+no longer a requirement to implement javax.ejb.SessionBean in the bean
+class.</li>
+  <li>The EJB in the sample demonstrates that home interfaces are no
+longer required for your session beans. You also no longer have to
+lookup a home reference in naming and then use the home to create an
+instance of the EJB. Now you can directly lookup the business interface
+for the EJB and begin using the reference without doing any create
+operation. In the sample you can see this demonstrated in the servlet
+code EJBCount.java. There is no reference to an EJB Home for the
+stateless session bean.</li>
+  <li>This sample demonstrates the use of <i>EJB injection</i>. Notice
+that EJBCount declares a variable,
+statelessCounter, with one of the interfaces on the ejb (LocalCounter). 
+Notice that there is no lookup
+required before using this variable.</li>
+  <li>This sample also demonstrates the use of multiple business
+interfaces on an EJB (StatelessCounterBean). The LocalCounter interface is used by the
+EJBCount class of the servlet, while the RemoteCounter interface is
+used by the RemoteEJBCount class that runs in the client container.
+Since there are multiple interfaces, they must be designated as local
+or remote interfaces. You'll see the <font face="courier">@Local</font>
+and <font face="courier">@Remote</font> annotations within the
+corresponding interface classes.</li>
+  <li>The EJB in the sample demonstrates EJB 3.0 interceptors. The
+Audit.java POJO is an <font face="courier">@AroundInvoke</font>
+interceptor class which is used by the EJB in the sample. See the <font
+ face="courier">@Interceptors</font> annotation in the
+StatelessCounterBean.java. &nbsp; Examine the SystemOut.log file of
+your server to see the Audit interceptor method <font face="courier">methodChecker()</font>
+in action.</li>
+  <li>There is additional injection demonstrated in the the sample.
+Notice in StatelessCounterBean.java that there is an <font
+ face="courier">@PersistenceContext(unitName="Counter")</font>
+annotation&nbsp; before the variable definition line &#8220;private
+EntityManager em;&#8221; This causes the JPA EnityManager to be injected into
+the &#8220;em&#8221; variable by the WebSphere Application Server EJB Container.
+The bean does not have to create this object since it's already
+provided through injection.&nbsp;&nbsp;</li>
+  <li>The stateless session bean in the sample demonstrates use of a
+container managed persistence context. Examine the methods &#8220;increment&#8221;
+and &#8220;getTheValue&#8221; in StatelessCounterBean.java to see the EntityManager
+interactions with JPA and the JPA entity object JPACounterEntity. The
+source code for the JPA entity object is in JPACounterEntity.java.
+&nbsp;&nbsp; It is also interesting to look at how JPA gets configured
+to connect with the Derby database. &nbsp; The persistence.xml file in
+the EJB3Beans.jar defines the datasource that JPA will use in the
+&lt;jta-data-source&gt; element. &nbsp;&nbsp; It also contains a
+performance enhancement. &nbsp;&nbsp; The
+&lt;exclude-unlisted-classes&gt; element, followed by the &lt;class&gt;
+element, makes application initialization faster by limiting JPA's
+search for classes that make up the persistence context. Use of this
+performance enhancement is strongly encouraged. Finally, the
+resources.xml file under the /ibmconfig directory shows the definition
+of the datasource in WebSphere Application Server enhanced ear support.
+In this resources.xml file you can see the &#8220;jndiName&#8221; of the
+application scoped datasource, and the &#8220;databaseName&#8221;, showing the the
+Derby database location. The enhanced EAR config files are created
+using the Application Server Toolkit (AST) deployment descriptor editor.<br>
+  </li>
+</ol>
+<h2><br>
+<a name="INSTALL"></a>Installing and Starting the Sample</h2>
+<p>The EJB3CounterSample application is preloaded into the <span
+ style="font-style: italic;">WAS_HOME/</span><b>samples/lib</b>
+directory in the feature pack. The WebSphere InfoCenter contains details for
+2 methods for installing and starting the sample:
+<ol>
+<li>Using the adminstrative console. Search for 
+&#8220;Installing EJB 3.0 Samples with the console&#8221;.
+<li>Using a script. Search for 
+&#8220Installing EJB 3.0 Samples using scripting&#8221;.
+</ol>
+</p>
+<h2>Executing the sample</h2>
+<p>The sample can be executed either locally from the servlet or
+remotely using the
+client container.
+</p>
+<h3>Executing the sample from the servlet</h3>
+<p>The counter sample&#8217;s web application is accessed by opening
+a web browser at url &#8220;<a href="http://localhost:9080/ejb3sample/counter">http://localhost:9080/ejb3sample/counter</a>&#8221;
+on the system where you installed the feature pack. (Note: the port in
+your configuration may be other than 9080. 9080 is typical.)
+You should see the sample's web page as follows.<br>
+<br>
+<img src="EJB3SampleImages/InitialServlet.JPG" border="0" height="625"
+ width="1024"><br>
+<br>
+Click on the Increment button to cause the servlet to access the EJB.
+<br>
+<br>
+<img src="EJB3SampleImages/ServletAfterIncrement.JPG" border="0"
+ height="625" width="1024"><br>
+<br>
+To see what the
+sample application is doing within the WebSphere Application Server,
+navigate
+your file system to view the SystemOut.log file in the directory <span
+ style="font-style: italic;">WAS_HOME</span><b>/profiles/&lt;your
+profile name&gt;/logs/&lt;your
+server name&gt;/</b>. Part of the log is shown below -- you can see the
+output of the "Audit" interceptor that was mentioned near the top of
+this document.</p>
+<pre>[12/7/06 15:35:01:946 CST] 00000031 SystemOut     O Audit:methodChecker - About to execute method: public int com.ibm.websphere.ejb3sample.counter.StatefulCounterBean.increment()<br>[12/7/06 15:35:04:439 CST] 00000031 SystemOut     O Audit:methodChecker - About to execute method: public int com.ibm.websphere.ejb3sample.counter.StatefulCounterBean.increment()<br>[12/7/06 15:35:06:903 CST] 00000031 SystemOut     O Audit:methodChecker - About to execute method: public int com.ibm.websphere.ejb3sample.counter.StatefulCounterBean.increment()<br>[12/7/06 15:35:10:738 CST] 00000031 SystemOut     O Audit:methodChecker - About to execute method: public int com.ibm.websphere.ejb3sample.counter.StatelessCounterBean.increment()<br>[12/7/06 15:35:12:181 CST] 00000031 InternalGener I   DSRA8203I: Database product name : Apache Derby<br>[12/7/06 15:35:12:191 CST] 00000031 InternalGener I   DSRA8204I: Database product version : 10.1.3.2<br>[12/7/06 15:35:12:191 CST] 00000031 InternalGener I   DSRA8205I: JDBC driver name  : Apache Derby Embedded JDBC Driver<br>[12/7/06 15:35:12:251 CST] 00000031 InternalGener I   DSRA8206I: JDBC driver version  : 10.1.3.2<br>[12/7/06 15:35:13:843 CST] 00000031 SystemOut     O JPACounterEntity:setPrimaryKey = 'PRIMARYKEY'<br>[12/7/06 15:35:13:843 CST] 00000031 SystemOut     O JPACounterEntity:getValue = 0<br>[12/7/06 15:35:13:843 CST] 00000031 SystemOut     O JPACounterEntity:setValue = 1<br>[12/7/06 15:35:14:143 CST] 00000031 SystemOut     O JPACounterEntity:getValue = 1<br>[12/7/06 15:35:14:153 CST] 00000031 SystemOut     O Audit:methodChecker - About to execute method: public int com.ibm.websphere.ejb3sample.counter.StatelessCounterBean.getTheValue()<br>[12/7/06 15:35:14:163 CST] 00000031 SystemOut     O JPACounterEntity:getValue = 1<br>[12/7/06 15:35:16:977 CST] 00000031 SystemOut     O Audit:methodChecker - About to execute method: public int com.ibm.websphere.ejb3sample.counter.StatelessCounterBean.increment()<br>[12/7/06 15:35:16:977 CST] 00000031 SystemOut     O JPACounterEntity:getValue = 1<br>[12/7/06 15:35:16:977 CST] 00000031 SystemOut     O JPACounterEntity:setValue = 2<br>[12/7/06 15:35:17:058 CST] 00000031 SystemOut     O JPACounterEntity:getValue = 2<br>[12/7/06 15:35:17:068 CST] 00000031 SystemOut     O Audit:methodChecker - About to execute method: public int com.ibm.websphere.ejb3sample.counter.StatelessCounterBean.getTheValue()<br>[12/7/06 15:35:17:068 CST] 00000031 SystemOut     O JPACounterEntity:getValue = 2<br>[12/7/06 15:35:19:721 CST] 00000031 SystemOut     O Audit:methodChecker - About to execute method: public int com.ibm.websphere.ejb3sample.counter.StatelessCounterBean.increment()<br>[12/7/06 15:35:19:721 CST] 00000031 SystemOut     O JPACounterEntity:getValue = 2<br>[12/7/06 15:35:19:721 CST] 00000031 SystemOut     O JPACounterEntity:setValue = 3<br>[12/7/06 15:35:19:721 CST] 00000031 SystemOut     O JPACounterEntity:getValue = 3<br>[12/7/06 15:35:19:721 CST] 00000031 SystemOut     O Audit:methodChecker - About to execute method: public int com.ibm.websphere.ejb3sample.counter.StatelessCounterBean.getTheValue()<br>[12/7/06 15:35:19:721 CST] 00000031 SystemOut     O JPACounterEntity:getValue = 3</pre>
+<p><br>
+You may wish to modify the sample and try additional
+features supported by the Beta release. Instructions are provided below
+on how to modify the application. &nbsp;&nbsp; Please take some time to
+look at the sample
+source code. The sample source code
+demonstrates several EJB 3.0 and JPA 1.0 features (see <i>EJB 3.0 and
+JPA 1.0 functions demonstrated by the sample</i> at the top of this
+document for futher explanation). &nbsp; For a complete list of the
+functions
+supported by the feature pack see the <i>Getting Started Guide</i>. </p>
+<h3>Executing the sample from the client</h3>
+<p>First, run the createEJBStubs command against the ear file to
+generate remote
+stubs in the EJB3Beans.jar file that is contained in the sample ear.
+<br>
+<br>
+<img src="EJB3SampleImages/createEJBStubs.JPG" border="0"><br>
+<br>
+</p>
+<p>Next, execute the sample using the launchClient command.
+<br>
+<br>
+<img src="EJB3SampleImages/launchClient.jpg" border="0">
+</p>
+<h2>Uninstalling the sample</h2>
+<p>To uninstall the counter sample perform the following actions:
+</p>
+<ol>
+  <li>
+Bring up the WebSphere Integrated
+Solutions Console in a web browser.
+  </li>
+  <li>From the console, display the &#8220;Enterprise Applications&#8221; panel by
+selecting Applications -&gt; Enterprise Applications.
+  </li>
+  <li>On this panel select the check box just to the left of the
+EJB3CounterSample application.</li>
+  <li>Press the &#8220;Uninstall&#8221; button above the application list. (You
+will
+be taken to the &#8220;Uninstall Application&#8221; panel.)</li>
+  <li>Press the &#8220;OK&#8221; button to confirm that you want to uninstall the
+application. (You will be taken back to the "Enterprise Applications&#8221;
+panel.)</li>
+  <li>Verify that the EJB3CounterSample has been removed from the list
+of
+installed applications.</li>
+  <li>Select the &#8220;Save&#8221; option on this panel to save these
+configuration
+changes directly to the master configuration.</li>
+</ol>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<h2>Modifying the sample</h2>
+<p>The feature pack includes the source code for the
+EJB3CounterSample application. Please
+feel free to change this sample and try out additional functions
+supported by
+the feature pack. &nbsp;&nbsp; Two build
+environments have been tested with the sample. &nbsp; The feature pack
+includes the build control files so that you can either
+use the WebSphere Ant build process to rebuild the application, or you
+may
+import the sample into the Eclipse tool and rebuild it in that
+environment. Below are more details for
+rebuilding the sample.</p>
+<h2>Building the sample with WebSphere ANT</h2>
+<p>
+To rebuild the same using WebSphere ANT support, perform the following:
+</p>
+<ol>
+  <li>
+Open a command window.
+  </li>
+  <li>Navigate to the directory "<span style="font-style: italic;">WAS_HOME</span>/samples/src/EJB3SampleApplications/EJB3Counter".
+  </li>
+  <li>Issue the command <span style="font-style: italic;">WAS_HOME</span>/bin/ws_ant.
+(The resulting
+EJB3CounterSample.ear files will be placed in the directory "<span
+ style="font-style: italic;">WAS_HOME/</span>samples/lib/EJB3SampleApplications."
+  </li>
+  <li>Follow the instructions above in "Uninstalling the sample" to
+remove the existing sample application.
+  </li>
+  <li>Follow the instructions above in "Installing and starting the
+sample" to install and activate your modified application.
+(During the install instructions, you will need to navigate the file
+system to the "<span style="font-style: italic;">WAS_HOME</span>/samples/lib/EJB3SampleApplications"
+directory,
+rather than "<span style="font-style: italic;">WAS_HOME</span>/installableApps"
+to install your modified application.
+  </li>
+</ol>
+<h2>Setting up an EJB 3.0/JPA Development Environment with Eclipse</h2>
+<p class="MsoNormal">These instructions assume you have installed the
+WebSphere Application Server v6.1 Feature Pack for EJB 3.0 using the
+default location of c:/Program Files/IBM/WebSphere/AppServer.<span
+ style="">&nbsp; </span>If you have used an alternate
+location, one small change will be necessary in the build.xml file.</p>
+<p class="MsoNormal">Also, these instructions are using Eclipse v3.2
+with a Java SE 5.0 compiler as the default.<span style="">&nbsp; </span>The
+Java SE 5.0 environment is a
+requirement for the EJB 3.0 and JPA programming models.</p>
+<h3>Setting up Workspace<span style=""> </span></h3>
+<p class="MsoNormal"></p>
+<ol style="margin-top: 0in;" start="1" type="1">
+  <li class="MsoNormal" style="">Start Eclipse<br style="">
+  </li>
+  <ol style="margin-top: 0in;" start="1" type="a">
+    <li class="MsoNormal" style="">Open either a new or existing
+workspace.<br>
+      <br>
+<!--[if gte vml 1]><v:shapetype id="_x0000_t75" coordsize="21600,21600"
+       o:spt="75" o:preferrelative="t" path="m@4@5l@4@11@9@11@9@5xe" filled="f"
+       stroked="f">
+       <v:stroke joinstyle="miter"/>
+       <v:formulas>
+        <v:f eqn="if lineDrawn pixelLineWidth 0"/>
+        <v:f eqn="sum @0 1 0"/>
+        <v:f eqn="sum 0 0 @1"/>
+        <v:f eqn="prod @2 1 2"/>
+        <v:f eqn="prod @3 21600 pixelWidth"/>
+        <v:f eqn="prod @3 21600 pixelHeight"/>
+        <v:f eqn="sum @0 0 1"/>
+        <v:f eqn="prod @6 1 2"/>
+        <v:f eqn="prod @7 21600 pixelWidth"/>
+        <v:f eqn="sum @8 21600 0"/>
+        <v:f eqn="prod @7 21600 pixelHeight"/>
+        <v:f eqn="sum @10 21600 0"/>
+       </v:formulas>
+       <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect"/>
+       <o:lock v:ext="edit" aspectratio="t"/>
+      </v:shapetype><v:shape id="_x0000_i1025" type="#_x0000_t75" style='width:328.5pt;
+       height:183pt'>
+       <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image001.png"
+        o:title=""/>
+      </v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image002.jpg" v:shapes="_x0000_i1025"
+ height="244" width="438"><!----></li>
+  </ol>
+</ol>
+<br>
+<ol style="margin-top: 0in;" start="1" type="1">
+  <ol style="margin-top: 0in;" start="2" type="a">
+    <li class="MsoNormal" style="">Close the Welcome screen<br>
+      <br>
+<!--[if gte vml 1]><v:shape id="_x0000_i1026" type="#_x0000_t75" style='width:338.25pt;
+       height:238.5pt'>
+       <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image003.png"
+        o:title=""/>
+      </v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image004.jpg" v:shapes="_x0000_i1026"
+ height="318" width="451"><!----></li>
+  </ol>
+</ol>
+<p class="MsoNormal"></p>
+<ol style="margin-top: 0in;" start="1" type="1">
+  <ol style="margin-top: 0in;" start="3" type="a">
+    <li class="MsoNormal" style="">Switch to the Java Perspective.<br>
+      <br>
+<!--[if gte vml 1]><v:shape id="_x0000_i1027" type="#_x0000_t75" style='width:150pt;
+       height:261.75pt'>
+       <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image005.png"
+        o:title=""/>
+      </v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image006.jpg" v:shapes="_x0000_i1027"
+ height="349" width="200"><!----><br style="">
+    </li>
+  </ol>
+</ol>
+<p class="MsoNormal"></p>
+<ol style="margin-top: 0in;" start="2" type="1">
+  <li class="MsoNormal" style="">Your Eclipse may be setup to use a
+Java 1.4 JDK and JRE by default.<span style="">&nbsp; </span>You need
+to update the preferences in order to compile Java 5 code.<span style="">&nbsp;
+    </span>EJB 3.0 and JPA rely on Java 5 annotations and features.<br
+ style="">
+  </li>
+</ol>
+<ol style="margin-top: 0in;" start="2" type="1">
+  <ol style="margin-top: 0in;" start="1" type="a">
+    <li class="MsoNormal" style="">Select Window from the main menu,
+and then Preferences&#8230;<br style="">
+    </li>
+    <li class="MsoNormal" style="">Expand the Java section and select
+Compiler.<span style="">&nbsp; </span>Switch the <b style="">Compiler
+compliance level </b>to 5.0 as shown below.<br>
+      <br>
+<!--[if gte vml 1]><v:shape id="_x0000_i1028" type="#_x0000_t75" style='width:431.25pt;
+       height:327.75pt'>
+       <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image007.png"
+        o:title=""/>
+      </v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image008.jpg" v:shapes="_x0000_i1028"
+ height="437" width="575"><!----><br style="">
+    </li>
+    <li class="MsoNormal" style="">Press Apply.<span style="">&nbsp; </span>The
+following prompt may appear.<span style="">&nbsp; </span>If it does,
+just click Yes and continue.<br>
+      <br>
+<!--[if gte vml 1]><v:shape id="_x0000_i1029" type="#_x0000_t75" style='width:330.75pt;
+       height:109.5pt'>
+       <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image009.png"
+        o:title=""/>
+      </v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image010.jpg" v:shapes="_x0000_i1029"
+ height="146" width="441"><!----><br>
+      <br style="">
+    </li>
+    <li class="MsoNormal" style="">Next switch to the Installed JREs
+and add the JRE that shipped with WebSphere Application Server v6.1.<br>
+      <br>
+<!--[if gte vml 1]><v:shape id="_x0000_i1030" type="#_x0000_t75" style='width:374.25pt;
+       height:334.5pt'>
+       <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image011.png"
+        o:title=""/>
+      </v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image012.jpg" v:shapes="_x0000_i1030"
+ height="446" width="499"><!----><br>
+<!--[if gte vml 1]><v:shape id="_x0000_i1031" type="#_x0000_t75" style='width:431.25pt;
+       height:327.75pt'>
+       <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image013.png"
+        o:title=""/>
+      </v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image014.jpg" v:shapes="_x0000_i1031"
+ height="437" width="575"><!----><br style="">
+    </li>
+    <li class="MsoNormal" style="">Press OK to save the changes and
+Press Yes to do a build.<span style="">&nbsp; </span>The following
+prompt may appear.<span style="">&nbsp; </span>If so, select Yes and
+continue.<br>
+      <br>
+<!--[if gte vml 1]><v:shape id="_x0000_i1032" type="#_x0000_t75" style='width:330.75pt;
+       height:109.5pt'>
+       <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image009.png"
+        o:title=""/>
+      </v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image010.jpg" v:shapes="_x0000_i1032"
+ height="146" width="441"><!----><br>
+    </li>
+  </ol>
+</ol>
+<h3>Creating a Java project<br>
+<span style="">&nbsp;</span></h3>
+<p class="MsoNormal">In this section you will walk you through creating
+the sample Java Project.<br style="">
+</p>
+<ol style="margin-top: 0in;" start="1" type="1">
+  <li class="MsoNormal" style="">First you need to create the Java
+Project via File -&gt; New -&gt; Project.<span style="">&nbsp; </span>Select
+Java Project and click Next&#8230;<br>
+    <br>
+<!--[if gte vml 1]><v:shape id="_x0000_i1033" type="#_x0000_t75" style='width:292.5pt;
+      height:359.25pt'>
+      <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image015.png" o:title=""/>
+     </v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image016.jpg" v:shapes="_x0000_i1033"
+ height="479" width="390"><!----><br>
+  </li>
+  <li class="MsoNormal" style="">Fill in the name for your project.<span
+ style="">&nbsp; </span>Depending on the defaults for your Eclipse
+environment, you may also want to select the options as outlined below.<span
+ style="">&nbsp; </span>Click Next&#8230;<br>
+    <br>
+<!--[if gte vml 1]><v:shape id="_x0000_i1034" type="#_x0000_t75" style='width:329.25pt;
+      height:390.75pt'>
+      <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image017.png" o:title=""/>
+     </v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image018.jpg" v:shapes="_x0000_i1034"
+ height="521" width="439"><!----><br style="">
+  </li>
+  <li class="MsoNormal" style="">This next panel just shows the default
+values for the project.<span style="">&nbsp; </span>After reviewing
+these choices, click Finish.<span style="">&nbsp; </span>You will be
+adjusting some of these project settings after you import the sample
+source.<span style="">&nbsp; </span>Your Eclipse project has been
+created.<br>
+    <br>
+<!--[if gte vml 1]><v:shape id="_x0000_i1035" type="#_x0000_t75" style='width:381pt;
+      height:511.5pt'>
+      <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image019.png" o:title=""/>
+     </v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image020.jpg" v:shapes="_x0000_i1035"
+ height="682" width="508"><!----></li>
+</ol>
+<h3>Adding Java EE Runtime Jar files to your project</h3>
+<p class="MsoNormal"><o:p>&nbsp;</o:p></p>
+<ol style="margin-top: 0in;" start="1" type="1">
+  <li class="MsoNormal" style="">In order to compile cleanly within
+Eclipse, the Java EE runtime jars from the Feature Pack installation
+need to be included as external jars for your Eclipse project.<span
+ style="">&nbsp; </span>To do this, open your Project&#8217;s Properties
+-&gt; Java Build Path and open the Libraries tab:<br>
+    <br>
+<!--[if gte vml 1]><v:shape id="_x0000_i1036" type="#_x0000_t75" style='width:427.5pt;
+      height:287.25pt'>
+      <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image021.png" o:title=""/>
+     </v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image022.jpg" v:shapes="_x0000_i1036"
+ height="383" width="570"><!----><br>
+  </li>
+  <li class="MsoNormal" style="">Click on Add External JARs&#8230; and
+navigate to the plugins directory within the install location for the
+WebSphere Application Server.<span style="">&nbsp; </span>Here, you
+need to select the com.ibm.ws.jpa_7.0.0.jar and
+com.ibm.ws.runtime_6.1.0.jar files.<span style="">&nbsp; </span>These
+files give you access to the JPA and EJB 3.0 runtime classes necessary for
+building your projects.<br>
+    <br>
+<!--[if gte vml 1]><v:shape id="_x0000_i1037" type="#_x0000_t75" style='width:431.25pt;
+      height:273pt'>
+      <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image023.png" o:title=""/>
+     </v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image024.jpg" v:shapes="_x0000_i1037"
+ height="364" width="575"><!----><br style="">
+  </li>
+  <li class="MsoNormal" style="">You also need to include the j2ee.jar
+from the lib directory:<br>
+    <br>
+<!--[if gte vml 1]><v:shape id="_x0000_i1038" type="#_x0000_t75" style='width:422.25pt;
+      height:314.25pt'>
+      <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image025.png" o:title=""/>
+     </v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image026.jpg" v:shapes="_x0000_i1038"
+ height="419" width="563"><!----><br style="">
+  </li>
+  <li class="MsoNormal" style="">The Libraries tab should now look
+similar to this:<br>
+    <br>
+<!--[if gte vml 1]><v:shape id="_x0000_i1039" type="#_x0000_t75" style='width:6in;
+      height:211.5pt'>
+      <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image027.png" o:title=""/>
+     </v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image028.jpg" v:shapes="_x0000_i1039"
+ height="282" width="576"><!----></li>
+</ol>
+<h3>Importing the Sample Source</h3>
+<p class="MsoNormal"></p>
+<ol style="margin-top: 0in;" start="1" type="1">
+  <li class="MsoNormal" style="">Now that you have the workspace and
+project properly configured, you can import the source from the
+EJB3CounterSample.<span style="">&nbsp; </span>To do this, highlight
+your EJB3CounterSample project within Eclipse, right mouse click, and
+select Import&#8230;<span style="">&nbsp; </span>On the first Import panel,
+select File System and click Next:<br>
+    <br>
+<!--[if gte vml 1]><v:shape id="_x0000_i1040" type="#_x0000_t75" style='width:215.25pt;
+      height:370.5pt'>
+      <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image029.png" o:title=""/>
+     </v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image030.jpg" v:shapes="_x0000_i1040"
+ height="494" width="287"><!----><br style="">
+  </li>
+  <li class="MsoNormal" style="">On the next panel, use the Browse
+function to find the samples subdirectory within your WebSphere
+Application Server installation.<span style="">&nbsp; </span>Only
+select the src directory since the lib directory contains binaries that
+are not needed for the Eclipse import.<span style="">&nbsp; </span>Click
+Finish to complete the import process:<br>
+    <br>
+<!--[if gte vml 1]><v:shape id="_x0000_i1041" type="#_x0000_t75" style='width:407.25pt;
+      height:444pt'>
+      <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image031.png" o:title=""/>
+     </v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image032.jpg" v:shapes="_x0000_i1041"
+ height="592" width="543"><!----><br style="">
+  </li>
+  <li class="MsoNormal" style="">After the import, you will notice some
+&#8220;red x&#8221; marks indicating build failures.<span style="">&nbsp; </span>You
+need to configure the project&#8217;s source directories.<span style="">&nbsp;
+    </span>Once again, open the Properties panel for your
+EJB3CounterSample project and select the Java Build Path.<span style="">&nbsp;
+    </span>This time, open the Source tab:<br>
+    <br>
+<!--[if gte vml 1]><v:shape id="_x0000_i1042" type="#_x0000_t75" style='width:384.75pt;
+      height:282.75pt'>
+      <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image033.png" o:title=""/>
+     </v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image034.jpg" v:shapes="_x0000_i1042"
+ height="377" width="513"><!----><br style="">
+  </li>
+  <li class="MsoNormal" style="">Click on Add Folder&#8230;<span style="">&nbsp;
+    </span>Expand the src folder and select the EJB3Counter directory
+and click OK:<br>
+    <br>
+<!--[if gte vml 1]><v:shape id="_x0000_i1043" type="#_x0000_t75" style='width:194.25pt;
+      height:282.75pt'>
+      <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image035.png" o:title=""/>
+     </v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image036.jpg" v:shapes="_x0000_i1043"
+ height="377" width="259"><!----><br style="">
+  </li>
+  <li class="MsoNormal" style="">You&#8217;ll see an error about nesting
+source folders.<br>
+Since you do not have any source files in the &#8220;src&#8221; directory, you just
+need to remove this directory from the source folders:<br>
+    <br>
+<!--[if gte vml 1]><v:shape id="_x0000_i1044" type="#_x0000_t75" style='width:431.25pt;
+      height:269.25pt'>
+      <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image037.png" o:title=""/>
+     </v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image038.jpg" v:shapes="_x0000_i1044"
+ height="359" width="575"><!----><br>
+This screen should look like this after the Remove operation:<br>
+    <br>
+<!--[if gte vml 1]><v:shape id="_x0000_i1045" type="#_x0000_t75" style='width:431.25pt;
+      height:269.25pt'>
+      <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image039.png" o:title=""/>
+     </v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image040.jpg" v:shapes="_x0000_i1045"
+ height="359" width="575"><!----><br style="">
+  </li>
+  <li class="MsoNormal" style="">When you click OK on this panel, your
+project should automatically re-build and the &#8220;red x&#8221; marks should
+disappear:<br>
+    <br>
+<!--[if gte vml 1]><v:shape id="_x0000_i1046" type="#_x0000_t75" style='width:6in;
+      height:363pt'>
+      <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image041.png" o:title=""/>
+     </v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image042.jpg" v:shapes="_x0000_i1046"
+ height="484" width="576"><!----><o:p></o:p></li>
+</ol>
+<h3>Building the EJB3CounterSample Application</h3>
+<p class="MsoNormal">With the above configuration, basic compiling and
+building can be done via Eclipse.<span style="">&nbsp; </span>But,
+the packaging of the application into an enterprise application archive
+(ear) requires the use of an ant build.xml script.<span style="">&nbsp;
+</span>Let&#8217;s take a quick look at this
+build.xml file:<br>
+<br>
+<!--[if gte vml 1]><v:shape id="_x0000_i1047" type="#_x0000_t75" style='width:6in;
+ height:243.75pt'>
+ <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image043.png" o:title=""/>
+</v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image044.jpg" v:shapes="_x0000_i1047"
+ height="325" width="576"><!----><br style="">
+</p>
+<p class="MsoNormal">If you have installed WebSphere Application Server
+in a different
+directory from the default (c:/Program Files/IBM/WebSphere/AppServer),
+you will have to update the was.home property to the appropriate value.
+<br>
+</p>
+<ol style="margin-top: 0in;" start="1" type="1">
+  <li class="MsoNormal" style="">To kick off the build to create the
+ear file, just highlight the build.xml, right mouse click, select Run
+As.. -&gt; Ant Build.<span style="">&nbsp; </span>Your Console window
+should look similar to the following:<br>
+    <br>
+<!--[if gte vml 1]><v:shape id="_x0000_i1048" type="#_x0000_t75" style='width:6in;
+      height:327pt'>
+      <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image045.png" o:title=""/>
+     </v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image046.jpg" v:shapes="_x0000_i1048"
+ height="436" width="576"><!----><br style="">
+  </li>
+  <li class="MsoNormal" style="">Go back to your Package Explorer,
+highlight the EJB3CounterSample, and select Refresh.<span style="">&nbsp;
+    </span>You will now notice that the EJB3Beans.jar,
+WebApplication.war, and EJB3CounterSample.ear files have been created
+in the lib directory:<br>
+    <br>
+<!--[if gte vml 1]><v:shape id="_x0000_i1049" type="#_x0000_t75" style='width:6in;
+      height:299.25pt'>
+      <v:imagedata src="file:///C:\Temp\msohtml1\01\clip_image047.png" o:title=""/>
+     </v:shape><![endif]--><!----><img
+ src="EJB3SampleImages/clip_image048.jpg" v:shapes="_x0000_i1049"
+ height="399" width="576"><!----><br style="">
+  </li>
+  <li class="MsoNormal" style="">The EJB3CounterSample.ear file can now
+be installed into your WebSphere Application Server environment.</li>
+</ol>
+<h2></h2>
+<h2>Known limitations with sample</h2>
+<ol>
+  <li>The EJBCounterSample application is known to have installation
+and configuration problems with WAS ND due to the embedded database
+being located in a different location on the filesystem.<br>
+  </li>
+  <li>Because of the embedded database, the EJBCounterSample will not work
+  correctly in a cluster environment. If you desire to use the sample in a
+  cluster environment, configure an external database for the sample.
+  <li>The Derby database will not permit removal of the database files
+with the WebSphere Application Server process is active.&nbsp; If you
+uninstall and reinstall the sample application using the admin console
+support (i.e. while the server process is started) you will see warning
+message in the SystemOut.log, concerning Derby database files that are
+locked and cannot be deleted. Then, when you reactivate the sample, the
+counter value in the Derby database table will still be at the value
+left over from any previous execution of the sample. </li>
+</ol>
+</div>
+</body>
+</html>

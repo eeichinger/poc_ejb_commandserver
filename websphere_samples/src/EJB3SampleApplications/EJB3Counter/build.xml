@@ -1,0 +1,165 @@
+<?xml version="1.0"?>
+<!--
+  "This program may be used, executed, copied, modified and distributed without
+  royalty for the purpose of developing, using, marketing, or distributing."
+-->
+
+<project name="EJB3" default="all" basedir=".">
+
+        <echo message="basedir ${basedir}"/>
+  <!--
+  Need to update was.home to point at your WebSphere install location.
+  Default value is "c:/Program Files/IBM/WebSphere/AppServer"
+  -->
+  <property name="was.home" location="c:/Program Files/IBM/WebSphere/AppServer"/>
+
+  <property name="prereq.classpath" location="${was.home}/plugins/com.ibm.ws.runtime_6.1.0.jar;${was.home}/plugins/com.ibm.ws.jpa_6.1.0.jar;${was.home}/lib/j2ee.jar"/>
+  <property name="sample.dir" location="../../.."/>
+  <property name="lib.sample.dir" location="${sample.dir}/lib/EJB3SampleApplications"/>
+        <property name="bld.sample.dir" location="${sample.dir}/bld/EJB3SampleApplications"/>
+
+  <target name="all" depends="buildjars, makeear"/>
+
+  <target name="buildjars"
+      depends="clean, init, makeejb3, makeClient, makewar, unzipDatabase"/>
+
+
+  <target name="clean">
+    <tstamp/>
+    <echo message="CLEANING EJB3 samples..."/>
+    <delete dir="${bld.sample.dir}"/>
+    <delete dir="${lib.sample.dir}"/>
+  </target>
+
+
+  <target name="init"
+      depends="clean">
+    <tstamp/>
+    <echo message="CONSTRUCTING BUILD ENVIRONMENT..."/>
+    <mkdir dir="${bld.sample.dir}/WebApplication/WEB-INF/classes"/>
+    <mkdir dir="${lib.sample.dir}/ejb3sample"/>
+  </target>
+
+  <target name="compile"
+      depends="init"
+      description="Compile sources">
+    <tstamp/>
+    <echo message="COMPILING SOURCES..."/>
+
+    <javac
+        srcdir="${basedir}"
+        destdir="${bld.sample.dir}"
+        deprecation="true"
+        debug="on"
+        classpath="${prereq.classpath}"
+        failonerror="false"
+        includes="com/**/*.java"
+          excludes="com/**/EJBCount.java"
+        source="1.5"
+        target="1.5"/>
+
+    <javac
+                srcdir="${basedir}/client"
+                destdir="${sample.dir}/bld/EJB3SampleApplications"
+                deprecation="true"
+                debug="on"
+                classpath="${prereq.classpath}"
+                failonerror="false"
+                includes="com/**/*.java"
+                source="1.5"
+                target="1.5"/>
+
+    <javac
+        srcdir="${basedir}"
+        destdir="${bld.sample.dir}/WebApplication/WEB-INF/classes"
+        deprecation="true"
+        debug="on"
+        classpath="${prereq.classpath}"
+        failonerror="false"
+        includes="com/**/EJBCount.java"
+        source="1.5"
+        target="1.5"/>
+  </target>
+
+
+  <target name="makeejb3"
+      depends="compile">
+    <tstamp/>
+
+    <echo message="CREATING EJB3Beans JAR..."/>
+    <jar
+        jarfile="${lib.sample.dir}/EJB3Beans.jar">
+
+      <fileset
+          dir="${bld.sample.dir}"
+          includes="com/**/*.class"
+          excludes="com/**/EJBCount.class com/**/RemoteEJBCount.class"/>
+      <zipfileset dir="${basedir}/EJB3Beans/META-INF" prefix="META-INF" excludes="*.MF"/>
+    </jar>
+
+  </target>
+
+        <target name="makeClient"
+                        depends="compile">
+                <tstamp/>
+                <echo message="CREATING Client.jar..."/>
+                <jar jarFile="${sample.dir}/lib/EJB3SampleApplications/EJB3CounterSampleClient.jar"
+                                manifest="${sample.dir}/src/EJB3SampleApplications/EJB3Counter/client/META-INF/MANIFEST.MF">
+                        <fileset
+                                dir="${sample.dir}/bld/EJB3SampleApplications"
+                                includes="com/**/RemoteEJBCount.class"/>
+                        <fileset
+                                dir="${basedir}/client"
+                                includes="META-INF/*.*"
+                                excludes="MANIFEST.MF"/>
+                </jar>
+        </target>
+
+
+  <target name="makewar"
+      depends="compile">
+    <tstamp/>
+
+    <echo message="CREATING WebApplication WAR..."/>
+    <war
+        warfile="${lib.sample.dir}/ejb3sample/counter.war"
+        webxml="${basedir}/WebApplication/WEB-INF/web.xml">
+      <zipfileset dir="${bld.sample.dir}/WebApplication" includes="**/EJBCount.class"/>
+      <zipfileset dir="${basedir}/WebApplication" includes="*.jsp"/>
+      <zipfileset dir="${basedir}/WebApplication/WEB-INF" includes="*.xmi" prefix="WEB-INF"/>
+    </war>
+  </target>
+
+
+  <target name="unzipDatabase">
+    <tstamp/>
+
+    <echo message="UnZipping Database..."/>
+    <unzip
+        src="${basedir}/Database/EJB3SampleDB.zip"
+        dest="${bld.sample.dir}"/>
+  </target>
+
+
+  <target name="makeear"
+      depends="makeejb3,makeClient,makewar,unzipDatabase">
+    <tstamp/>
+
+    <echo message="CREATING EJB3CounterSample EAR..."/>
+    <jar
+        jarfile="${lib.sample.dir}/EJB3CounterSample.ear">
+      <fileset
+          dir="${lib.sample.dir}"
+          includes="EJB3Beans.jar,ejb3sample/counter.war,EJB3CounterSampleClient.jar"/>
+      <zipfileset dir="${bld.sample.dir}/database" includes="**" prefix="database"/>
+        <fileset dir="${basedir}" includes="META-INF/**"/>
+<!--
+      <fileset dir="${basedir}" includes="META-INF/ibmconfig/**"/>
+
+        <fileset
+                dir="${sample.dir}/src/EJB3SampleApplications/EJB3Counter"
+                includes="application.xml"/>
+-->
+    </jar>
+  </target>
+</project>
