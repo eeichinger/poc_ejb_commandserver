@@ -33,6 +33,15 @@
                      cache-home="true" refresh-home-on-connect-failure="true">
     </jee:remote-slsb>
 -->
+<!--
+    <jee:remote-slsb id="echoService" jndi-name="EchoServiceRemote"
+                     business-interface="EchoService"
+                     resource-ref="false" lookup-home-on-startup="false"
+                     cache-home="true" refresh-home-on-connect-failure="true">
+    </jee:remote-slsb>
+-->
+    <!--<bean id="echoService" class="EchoServiceDummy" />-->
+
     <bean id="remoteCommandTargetResolver" class="openejb.spike.server.BeanNameRemoteCommandInvocationTargetResolver"/>
 
     <bean id="remoteInvocationExecutor" class="org.springframework.remoting.support.DefaultRemoteInvocationExecutor"/>
@@ -42,7 +51,6 @@
         <constructor-arg ref="remoteInvocationExecutor"/>
     </bean>
 
-    <bean id="echoService" class="EchoServiceDummy" />
 
     <bean name="/remoteCommandServer" class="openejb.spike.server.HttpRemoteCommandServiceExporter">
         <constructor-arg ref="remoteInvocationServerDelegate"/>

@@ -27,14 +27,18 @@
                 </exclusion>
             </exclusions>
         </dependency>
-<!--
         <dependency>
             <groupId>com.opencredo.ejb</groupId>
             <artifactId>demo-war</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
--->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.5.11</version>
+            <scope>runtime</scope>
+        </dependency>        
     </dependencies>
 
 	<build>

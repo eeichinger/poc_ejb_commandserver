@@ -30,7 +30,6 @@
             <artifactId>remoting-ejb3</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>

@@ -48,13 +48,11 @@
     </build>
 
     <dependencies>
-<!--
         <dependency>
             <groupId>com.opencredo.ejb</groupId>
             <artifactId>remoting-ejb3</artifactId>
             <version>${project.version}</version>
         </dependency>
--->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>

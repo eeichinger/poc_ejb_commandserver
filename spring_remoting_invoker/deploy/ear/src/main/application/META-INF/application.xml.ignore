@@ -3,18 +3,12 @@
   xmlns="http://java.sun.com/xml/ns/j2ee"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/application_1_4.xsd">
-   	<display-name>DemoEJB3</display-name>
+   	<display-name>EJB3DeployTest</display-name>
 	<module>
-		<ejb>demo-ejb-0.0.1-SNAPSHOT.jar</ejb>
+		<ejb>
+			EJB3Beans.jar
+		</ejb>
 	</module>
-    <security-role id="SecurityRole_1163171785683">
-      <description>CSFL User</description>
-      <role-name>CFL-CSR-USER</role-name>
-    </security-role>
-    <security-role id="SecurityRole_1182415146852">
-      <description>IBIS User</description>
-      <role-name>IBIS-CFL-UPD</role-name>
-    </security-role>
 <!--
 	<module>
 		<java>
