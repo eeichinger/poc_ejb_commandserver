@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+<!--
+    <jee:remote-slsb id="caseManagementService" jndi-name="com.tnt.sech.api.CaseManagementServiceRemote"
+                     business-interface="com.tnt.sech.api.CaseManagementService" resource-ref="false"
+                     lookup-home-on-startup="false"
+                     cache-home="true" refresh-home-on-connect-failure="true">
+    </jee:remote-slsb>
+
+    <jee:remote-slsb id="userManagementService" jndi-name="com.tnt.sech.api.UserManagementServiceRemote"
+                     business-interface="com.tnt.sech.api.UserManagementService" resource-ref="false"
+                     lookup-home-on-startup="false"
+                     cache-home="true" refresh-home-on-connect-failure="true">
+    </jee:remote-slsb>
+
+
+    <jee:remote-slsb id="newsManagementService" jndi-name="com.tnt.sech.api.NewsManagementServiceRemote"
+                     business-interface="com.tnt.sech.api.NewsManagementService" resource-ref="false"
+                     lookup-home-on-startup="false"
+                     cache-home="true" refresh-home-on-connect-failure="true">
+    </jee:remote-slsb>
+
+
+    <jee:remote-slsb id="reactiveCaseService" jndi-name="com.tnt.sech.api.CreateReactiveCaseRemote"
+                     business-interface="com.tnt.sechsystem.iface.createcase.CreateCaseProcessIF"
+                     resource-ref="false" lookup-home-on-startup="false"
+                     cache-home="true" refresh-home-on-connect-failure="true">
+    </jee:remote-slsb>
+-->
+    <bean id="remoteCommandTargetResolver" class="openejb.spike.server.BeanNameRemoteCommandInvocationTargetResolver"/>
+
+    <bean id="remoteInvocationExecutor" class="org.springframework.remoting.support.DefaultRemoteInvocationExecutor"/>
+
+    <bean id="remoteInvocationServerDelegate" class="openejb.spike.server.RemoteCommandInvocationServer">
+        <constructor-arg ref="remoteCommandTargetResolver"/>
+        <constructor-arg ref="remoteInvocationExecutor"/>
+    </bean>
+
+    <bean id="echoService" class="EchoServiceDummy" />
+
+    <bean name="/remoteCommandServer" class="openejb.spike.server.HttpRemoteCommandServiceExporter">
+        <constructor-arg ref="remoteInvocationServerDelegate"/>
+    </bean>
+
+</beans>

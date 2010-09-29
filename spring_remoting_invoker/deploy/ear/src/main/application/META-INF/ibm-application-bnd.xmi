@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<com.ibm.ejs.models.base.bindings.applicationbnd:ApplicationBinding xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:com.ibm.ejs.models.base.bindings.applicationbnd="applicationbnd.xmi" xmi:id="ApplicationBinding_1163171785683">
+  <authorizationTable xmi:id="AuthorizationTable_1163171785683">
+    <authorizations xmi:id="RoleAssignment_1163171785683">
+      <specialSubjects xmi:type="com.ibm.ejs.models.base.bindings.applicationbnd:AllAuthenticatedUsers" xmi:id="AllAuthenticatedUsers_1285345730094" name="AllAuthenticatedUsers"/>
+      <role href="META-INF/application.xml#SecurityRole_1285345730094"/>
+    </authorizations>
+    <authorizations xmi:id="RoleAssignment_1216733303714">
+      <specialSubjects xmi:type="com.ibm.ejs.models.base.bindings.applicationbnd:AllAuthenticatedUsers" xmi:id="AllAuthenticatedUsers_1285345730094" name="AllAuthenticatedUsers"/>
+      <role href="META-INF/application.xml#SecurityRole_1285345730095"/>
+    </authorizations>
+  </authorizationTable>
+  <application href="META-INF/application.xml#Application_ID"/>
+</com.ibm.ejs.models.base.bindings.applicationbnd:ApplicationBinding>
