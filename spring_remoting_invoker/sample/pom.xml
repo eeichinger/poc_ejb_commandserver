@@ -9,12 +9,11 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-	<artifactId>demo-deploy</artifactId>
+	<artifactId>sample-reactor</artifactId>
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>ejb</module>
-		<module>war</module>
-        <module>ear</module>
+		<module>app</module>
+        <module>deploy</module>
     </modules>
 </project>
