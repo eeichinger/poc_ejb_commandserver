@@ -2,15 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>parent</artifactId>
-        <groupId>com.opencredo.ejb</groupId>
-        <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../../parent/pom.xml</relativePath>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>remoting-integration-tests</artifactId>
+    <parent>
+        <groupId>com.opencredo.spring-remoting</groupId>
+        <artifactId>parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../parent/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>integration-tests</artifactId>
+    <name>remoting-integration-tests</name>
     <packaging>jar</packaging>
 
     <build>
@@ -55,8 +57,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.opencredo.ejb</groupId>
-            <artifactId>remoting-ejb3</artifactId>
+            <groupId>com.opencredo.spring-remoting</groupId>
+            <artifactId>ejb3</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

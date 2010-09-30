@@ -5,13 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.opencredo.ejb</groupId>
+        <groupId>com.opencredo.spring-remoting</groupId>
         <artifactId>parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../../parent/pom.xml</relativePath>
+        <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
-    <artifactId>remoting-ejb3</artifactId>
+    <artifactId>ejb3</artifactId>
+    <name>remoting-ejb3</name>
     <!--<packaging>ejb</packaging>-->
 
     <build>
