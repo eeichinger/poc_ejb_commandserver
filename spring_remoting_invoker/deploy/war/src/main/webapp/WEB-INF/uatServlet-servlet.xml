@@ -6,6 +6,6 @@
 
     <context:annotation-config/>
 
-    <import resource="applicationContext-ejb3-lookup.xml"/>
+    <import resource="uatServlet-applicationContext.xml"/>
 
 </beans>

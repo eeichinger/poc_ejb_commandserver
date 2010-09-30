@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ejb-jar version="3.0">
+    <!--
+       xmlns="http://java.sun.com/xml/ns/javaee"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd"    -->
+    <enterprise-beans>
+        <session>
+            <ejb-name>openejb.spike.server.RemoteInvocationServerRemote</ejb-name>
+            <remote>openejb.spike.server.RemoteInvocationServerRemote</remote>
+            <ejb-class>openejb.spike.server.SpringEJB3RemoteInvocationServerBean</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Bean</transaction-type>
+        </session>
+    </enterprise-beans>
+</ejb-jar>

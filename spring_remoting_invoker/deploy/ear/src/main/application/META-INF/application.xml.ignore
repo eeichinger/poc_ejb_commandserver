@@ -3,10 +3,10 @@
   xmlns="http://java.sun.com/xml/ns/j2ee"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/application_1_4.xsd">
-   	<display-name>EJB3DeployTest</display-name>
+   	<display-name>EJB3Invoker</display-name>
 	<module>
 		<ejb>
-			EJB3Beans.jar
+			remoting-ejb3-0.0.1-SNAPSHOT.jar
 		</ejb>
 	</module>
 <!--

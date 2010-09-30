@@ -10,9 +10,9 @@ public class HttpInvokerIntegrationTest {
     public void can_connect() {
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("USER", "PASSWORD"));
         HttpRemoteCommandProxyFactoryBean proxyFactory = new HttpRemoteCommandProxyFactoryBean(
-                "http://ubuntu:9085/demo-war/remoting/remoteCommandServer",
+                "http://ubuntu:9085/remoting/remoting/remoteCommandServer",
                 "echoService",
-                "http://ubuntu:9085/demo-war/remoting/remoteCommandServer",
+                "http://ubuntu:9085/remoting/remoting/remoteCommandServer",
                 EchoService.class
         );
 

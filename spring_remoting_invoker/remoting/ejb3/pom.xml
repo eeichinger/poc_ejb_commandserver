@@ -12,17 +12,35 @@
     </parent>
 
     <artifactId>remoting-ejb3</artifactId>
-    <packaging>ejb</packaging>
+    <!--<packaging>ejb</packaging>-->
 
     <build>
         <plugins>
+<!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-ejb-plugin</artifactId>
+                <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                    <ejbVersion>3.0</ejbVersion>
+                    <archive>
+                        <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
                 </configuration>
             </plugin>
+-->
+            <!--
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-ejb-plugin</artifactId>
+                            <configuration>
+                                <ejbVersion>3.0</ejbVersion>
+                                <archive>
+                                    <manifest>
+                                        <addClasspath>false</addClasspath>
+                                    </manifest>
+                                </archive>
+                            </configuration>
+                        </plugin>
+            -->
         </plugins>
     </build>
 
@@ -31,16 +49,16 @@
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
         <!-- TEST Dependencies -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
